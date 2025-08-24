@@ -1,6 +1,6 @@
 ﻿namespace FolderSynchronizer
 {
-    public class Logger
+    public class Logger : ILogger
     {
         private readonly string logPath;        // Main log file path
         private readonly string errorLogPath;   // Error log file path

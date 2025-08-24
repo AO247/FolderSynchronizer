@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36121.58 d17.14
+VisualStudioVersion = 17.14.36121.58
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FolderSynchronizer", "FolderSynchronizer.csproj", "{05D2A99D-356D-427C-AAF1-C0159B648970}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FolderSynchronizer", "src\FolderSynchronizer.csproj", "{4F74B633-F163-8714-EB3E-2A79082E24D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FolderSynchronizer.Tests", "tests\FolderSynchronizer.Tests.csproj", "{2DEF24ED-F5B5-8A29-3800-666565488608}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{05D2A99D-356D-427C-AAF1-C0159B648970}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{05D2A99D-356D-427C-AAF1-C0159B648970}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{05D2A99D-356D-427C-AAF1-C0159B648970}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{05D2A99D-356D-427C-AAF1-C0159B648970}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F74B633-F163-8714-EB3E-2A79082E24D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F74B633-F163-8714-EB3E-2A79082E24D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F74B633-F163-8714-EB3E-2A79082E24D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F74B633-F163-8714-EB3E-2A79082E24D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DEF24ED-F5B5-8A29-3800-666565488608}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DEF24ED-F5B5-8A29-3800-666565488608}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DEF24ED-F5B5-8A29-3800-666565488608}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DEF24ED-F5B5-8A29-3800-666565488608}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
