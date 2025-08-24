@@ -58,6 +58,8 @@ namespace FolderSynchronizer
                         {
                             byte[] sourceHash = md5.ComputeHash(sourceStream);
                             byte[] replicaHash = md5.ComputeHash(replicaStream);
+                            sourceStream.Close();
+                            replicaStream.Close();
 
                             var sb = new StringBuilder();
                             for (int i = 0; i<sourceHash.Length; i++)
@@ -73,6 +75,8 @@ namespace FolderSynchronizer
                             if (sb.ToString() != rb.ToString())
                             {
                                 Console.WriteLine($"File {sourceFile} was changed.");
+
+                                File.Copy(sourceFilePath, Path.Combine(replicaPath, sourceFile), true);
                             }
                         }
                         existsInReplica = true;
@@ -82,6 +86,7 @@ namespace FolderSynchronizer
                 if (!existsInReplica)
                 {
                     Console.WriteLine($"File {sourceFile} was added.");
+                    File.Copy(sourceFilePath, Path.Combine(replicaPath, sourceFile), true);
                 }
             }
 
@@ -89,6 +94,7 @@ namespace FolderSynchronizer
             {
                 string replicaFile = Path.GetFileName(replicaFilePath);
                 Console.WriteLine($"File {replicaFile} was deleted.");
+                File.Delete(replicaFilePath);
             }
         }
 
