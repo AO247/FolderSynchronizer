@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace FolderSynchronizer
@@ -7,20 +8,15 @@ namespace FolderSynchronizer
     {
         static void Main(string[] arg)
         {
-            MD5 md5 = MD5.Create();
-            if (arg.Length < 2)
+            if (arg.Length < 4)
             {
                 Console.WriteLine("Please provide correct arguments");
+                Console.WriteLine("Example: FolderSynchronizer.exe <source path> <replica path> <time interval> <log file path>");
                 return;
             }
-            string logFilePath = Path.Combine(Directory.GetCurrentDirectory(), "logs");
-            
-            string logFileName = "log_" + DateTime.Now.ToString("yyyy-MM-dd_HH:mm:ss") + ".txt";
-            logFilePath = Path.Combine(logFilePath, logFileName);
 
-
-            var logFile = File.Create(logFilePath);
-            logFile.Close();
+            MD5 md5 = MD5.Create();
+            Logger logger = new Logger(arg[3]);
 
 
             string sourcePath = arg[0];
@@ -36,7 +32,7 @@ namespace FolderSynchronizer
                 lastTimeCharacter = 's';
             }
 
-            float timeInterval = Int32.Parse(arg[2]);
+            float timeInterval = int.Parse(arg[2]);
 
             if (lastTimeCharacter == 's')
             {
@@ -52,41 +48,35 @@ namespace FolderSynchronizer
             }
             else
             {
-                Console.WriteLine("Please provide correct time interval. Example: 10s, 5m, 1h");
+                logger.LogError($"Please provide correct time interval. Example: 10s, 5m, 1h");
                 return;
             }
 
 
             if (File.Exists(arg[0]) || File.Exists(arg[1]))
             {
-                string logMessage = "\nSource and replica path has to be to directory.";
-                Console.Write(logMessage);
-                File.AppendAllText(logFilePath, logMessage);
+                logger.LogError($"Source and replica path has to be to directory.");
                 return;
             }
 
             if(!Directory.Exists(sourcePath))
             {
-                string logMessage = "\nSource path does not exist.";
-                Console.Write(logMessage);
-                File.AppendAllText(logFilePath, logMessage);
+                logger.LogError($"Source path does not exist.");
                 return;
             }
 
 
             if (!Directory.Exists(replicaPath))
             {
-                string logMessage = "\nReplica path does not exist.";
-                Console.Write(logMessage);
-                File.AppendAllText(logFilePath, logMessage);
+                logger.LogError($"Replica path does not exist.");
                 return;
             }
 
-            while (true)
+            while (true) // main loop
             {
                 string[] sourceFiles = Directory.GetFiles(sourcePath);
                 string[] replicaFiles = Directory.GetFiles(replicaPath);
-                var replicaFilesToDelete = new List<String>(replicaFiles);
+                var replicaFilesToDelete = new List<string>(replicaFiles);
 
 
 
@@ -120,9 +110,8 @@ namespace FolderSynchronizer
 
                                 if (sb.ToString() != rb.ToString())
                                 {
-                                    string logMessage = $"\nFile {sourceFile} was changed.";
-                                    Console.Write(logMessage);
-                                    File.AppendAllText(logFilePath, logMessage);
+                                    logger.Log($"File {sourceFile} was changed.");
+
                                     File.Copy(sourceFilePath, Path.Combine(replicaPath, sourceFile), true);
                                 }
                             }
@@ -132,9 +121,8 @@ namespace FolderSynchronizer
                     }
                     if (!existsInReplica)
                     {
-                        string logMessage = $"\nFile {sourceFile} was added.";
-                        Console.Write(logMessage);
-                        File.AppendAllText(logFilePath, logMessage);
+                        logger.Log($"File {sourceFile} was added.");
+
                         File.Copy(sourceFilePath, Path.Combine(replicaPath, sourceFile), true);
                     }
                 }
@@ -142,18 +130,12 @@ namespace FolderSynchronizer
                 foreach (string replicaFilePath in replicaFilesToDelete)
                 {
                     string replicaFile = Path.GetFileName(replicaFilePath);
-                    string logMessage = $"\nFile {replicaFile} was deleted.";
-                    Console.Write(logMessage);
-                    File.AppendAllText(logFilePath, logMessage);
+                    logger.Log($"File {replicaFile} was deleted.");
+
                     File.Delete(replicaFilePath);
                 }
 
-                DateTime now = DateTime.Now;
-                string logMessageStandard = $"\nSynchronization completed at {now:yyyy-MM-dd HH:mm:ss}";
-                Console.Write(logMessageStandard);
-                File.AppendAllText(logFilePath, logMessageStandard);
-
-                System.Threading.Thread.Sleep((int)timeInterval);
+                Thread.Sleep((int)timeInterval);
             }
         }
 
