@@ -10,6 +10,7 @@
                 Console.WriteLine("Example: FolderSynchronizer.exe <source path> <replica path> <time interval> <log file path>");
                 return;
             }
+            
 
             ILogger logger = new Logger(arg[3]);
             FolderSynchronizer folderSynchronizer = new FolderSynchronizer(arg[0], arg[1], logger);
