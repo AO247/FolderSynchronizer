@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FolderSynchronizer
+﻿namespace FolderSynchronizer
 {
     public class Logger
     {
-        private readonly string logPath;
-        private readonly string errorLogPath;
+        private readonly string logPath;        // Main log file path
+        private readonly string errorLogPath;   // Error log file path
 
         public Logger(string logFilePath) // Initialize logger
         {
             logPath = logFilePath;
             errorLogPath = Path.Combine(
-                Path.GetDirectoryName(logPath),
+                Path.GetDirectoryName(logPath) ?? ".",
                 Path.GetFileNameWithoutExtension(logPath) + "_error" + Path.GetExtension(logPath));
-            Console.WriteLine($"Logging to {logPath} and {errorLogPath}");
+            
         }
 
-        public void Log(string message) // Log general messages to the main log file
+        public void Log(string message) // Log general messages
         {
             try
             {
@@ -54,8 +48,11 @@ namespace FolderSynchronizer
                     writer.WriteLine(msg);
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Failed to write to error log file: {ex.Message}");
+                Console.ResetColor();
             }
         }
     }
