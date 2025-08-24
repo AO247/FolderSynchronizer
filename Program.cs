@@ -13,6 +13,15 @@ namespace FolderSynchronizer
                 Console.WriteLine("Please provide correct arguments");
                 return;
             }
+            string logFilePath = Path.Combine(Directory.GetCurrentDirectory(), "logs");
+            
+            string logFileName = "log_" + DateTime.Now.ToString("yyyy-MM-dd_HH:mm:ss") + ".txt";
+            logFilePath = Path.Combine(logFilePath, logFileName);
+
+
+            var logFile = File.Create(logFilePath);
+            logFile.Close();
+
 
             string sourcePath = arg[0];
             string replicaPath = arg[1];
@@ -43,31 +52,33 @@ namespace FolderSynchronizer
             }
             else
             {
-                string logMessage = "Please provide correct time interval. Example: 10s, 5m, 1h";
-                Console.WriteLine(logMessage);
+                Console.WriteLine("Please provide correct time interval. Example: 10s, 5m, 1h");
                 return;
             }
 
 
-
-
-
             if (File.Exists(arg[0]) || File.Exists(arg[1]))
             {
-                Console.WriteLine("Source and replica path has to be to directory.");
+                string logMessage = "\nSource and replica path has to be to directory.";
+                Console.Write(logMessage);
+                File.AppendAllText(logFilePath, logMessage);
                 return;
             }
 
             if(!Directory.Exists(sourcePath))
             {
-                Console.WriteLine("Source path does not exist.");
+                string logMessage = "\nSource path does not exist.";
+                Console.Write(logMessage);
+                File.AppendAllText(logFilePath, logMessage);
                 return;
             }
 
 
             if (!Directory.Exists(replicaPath))
             {
-                Console.WriteLine("Replica path does not exist.");
+                string logMessage = "\nReplica path does not exist.";
+                Console.Write(logMessage);
+                File.AppendAllText(logFilePath, logMessage);
                 return;
             }
 
@@ -109,8 +120,9 @@ namespace FolderSynchronizer
 
                                 if (sb.ToString() != rb.ToString())
                                 {
-                                    Console.WriteLine($"File {sourceFile} was changed.");
-
+                                    string logMessage = $"\nFile {sourceFile} was changed.";
+                                    Console.Write(logMessage);
+                                    File.AppendAllText(logFilePath, logMessage);
                                     File.Copy(sourceFilePath, Path.Combine(replicaPath, sourceFile), true);
                                 }
                             }
@@ -120,7 +132,9 @@ namespace FolderSynchronizer
                     }
                     if (!existsInReplica)
                     {
-                        Console.WriteLine($"File {sourceFile} was added.");
+                        string logMessage = $"\nFile {sourceFile} was added.";
+                        Console.Write(logMessage);
+                        File.AppendAllText(logFilePath, logMessage);
                         File.Copy(sourceFilePath, Path.Combine(replicaPath, sourceFile), true);
                     }
                 }
@@ -128,13 +142,17 @@ namespace FolderSynchronizer
                 foreach (string replicaFilePath in replicaFilesToDelete)
                 {
                     string replicaFile = Path.GetFileName(replicaFilePath);
-                    Console.WriteLine($"File {replicaFile} was deleted.");
+                    string logMessage = $"\nFile {replicaFile} was deleted.";
+                    Console.Write(logMessage);
+                    File.AppendAllText(logFilePath, logMessage);
                     File.Delete(replicaFilePath);
                 }
+
                 DateTime now = DateTime.Now;
-                string logMessageStandard = $"Synchronization completed at {now:yyyy-MM-dd HH:mm:ss}";
-                Console.WriteLine(logMessageStandard);
-                Console.WriteLine($"Next synchronization in {timeInterval/1000} seconds.");
+                string logMessageStandard = $"\nSynchronization completed at {now:yyyy-MM-dd HH:mm:ss}";
+                Console.Write(logMessageStandard);
+                File.AppendAllText(logFilePath, logMessageStandard);
+
                 System.Threading.Thread.Sleep((int)timeInterval);
             }
         }
