@@ -27,15 +27,15 @@
 
         private static float ParseTimeInterval(string arg, ILogger logger)
         {
-            var lastTimeCharacter = arg[arg.Length - 1];  // get last character of time interval argument
+            var unit = arg[arg.Length - 1];  // get last character of the string
 
-            if (!char.IsDigit(lastTimeCharacter)) // if last character is not a digit, remove it from the string
+            if (!char.IsDigit(unit)) // if last character is not a digit, remove it from the string
             {
                 arg = arg.Remove(arg.Length - 1);
             }
             else
             {
-                lastTimeCharacter = 's'; // base time interval is seconds
+                unit = 's'; // base time interval is seconds
             }
             float timeInterval = 0.0f;
             try
@@ -54,22 +54,21 @@
                 return -1.0f;
             }
 
-            if (lastTimeCharacter == 's')       // seconds
+
+            switch (unit) // convert time interval to milliseconds
             {
-                timeInterval *= 1000;
-            }
-            else if (lastTimeCharacter == 'm')  // minutes
-            {
-                timeInterval = timeInterval * 60000;
-            }
-            else if (lastTimeCharacter == 'h')  // hours
-            {
-                timeInterval = timeInterval * 3600000;
-            }
-            else
-            {
-                logger.LogError($"Please provide correct time interval. Example: 10s, 5m, 1h");
-                return -1.0f;
+                case 's':
+                    timeInterval *= 1000;
+                    break;
+                case 'm':
+                    timeInterval = timeInterval * 60000;
+                    break;
+                case 'h':
+                    timeInterval = timeInterval * 3600000;
+                    break;
+                default:
+                    logger.LogError($"Please provide correct time interval. Example: 10s, 5m, 1h");
+                    return -1.0f;
             }
             return timeInterval;
         }
